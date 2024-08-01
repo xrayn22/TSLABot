@@ -1,14 +1,14 @@
 const Discord = require('discord.js');
-
 const ticketSchema = require("../../database/models/tickets");
 
 module.exports = async (client, interaction, args) => {
-    const data = await ticketSchema.findOne({ Guild: interaction.guild.id });
+    const panelName = interaction.options.getString('panelName'); // New field for unique panel identifier
+    const data = await ticketSchema.findOne({ Guild: interaction.guild.id, PanelName: panelName });
 
     const perms = await client.checkUserPerms({
         flags: [Discord.PermissionsBitField.Flags.ManageMessages],
         perms: [Discord.PermissionsBitField.Flags.ManageMessages]
-    }, interaction)
+    }, interaction);
 
     if (perms == false) return;
 
@@ -18,7 +18,7 @@ module.exports = async (client, interaction, args) => {
             return client.errNormal({
                 error: "Do the ticket setup!",
                 type: 'editreply'
-            }, interaction)
+            }, interaction);
         }
 
         if (interaction.channel.parentId == ticketCategory.id) {
@@ -28,15 +28,14 @@ module.exports = async (client, interaction, args) => {
             return client.simpleEmbed({
                 desc: `Added ${user}`,
                 type: 'editreply'
-            }, interaction)
-        }
-        else {
+            }, interaction);
+        } else {
             client.errNormal({
                 error: "This is not a ticket!",
                 type: 'editreply'
-            }, interaction)
+            }, interaction);
         }
     }
-}
+};
 
  
